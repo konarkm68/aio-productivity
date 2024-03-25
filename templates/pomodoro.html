@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    pomodoro
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <p class="lead text-center">Pomodoro Timer</p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <p class="text-center">Timer:</p>
+            <p class="text-center display-2 fs-3">25:00</p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <button class="btn btn-primary" type="button">Start</button>
+    </div>
+</div>
+
+
+{% endblock %}
+
