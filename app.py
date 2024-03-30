@@ -1,13 +1,14 @@
 import os
+import requests
 
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session, url_for
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import apology, login_required, lookup, usd
+from helpers import apology, login_required
 
-db = SQL("sqlite:///users.db")
+db = SQL("sqlite:///aio-p.db")
 
 # Configure application
 app = Flask(__name__)
@@ -15,7 +16,7 @@ app = Flask(__name__)
 app.secret_key = "3IkeHwgzG4VbRo1s"
 
 # Custom filter
-app.jinja_env.filters["usd"] = usd
+#app.jinja_env.filters["usd"] = usd
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
@@ -35,7 +36,14 @@ def after_request(response):
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    category = 'inspirational'
+    api_url = 'https://api.api-ninjas.com/v1/quotes?category={}'.format(category)
+    response = requests.get(api_url, headers={'X-Api-Key': 'JPoUeHK/XTHGgNtjCufFyQ==tn0KdgTRnXFP3mVh'})
+    if response.status_code == requests.codes.ok:
+        response = response.json()[0]
+    else:
+        flash("Error:", response.status_code, response.text)
+    return render_template("index.html", quote=response["quote"], author=response["author"])
 
 @app.route('/todo')
 def todo():
@@ -89,6 +97,8 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
+
+        flash("Logged in!")
 
         print(session["user_id"])
 

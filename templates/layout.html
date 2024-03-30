@@ -32,7 +32,6 @@
                         <li class="nav-item"><a class="nav-link" href="/todo">To-Do</a></li>
                         <li class="nav-item"><a class="nav-link" href="/pomodoro">Pomodoro</a></li>
                         <li class="nav-item"><a class="nav-link" href="/note">Note-Taking</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/quote">Quote Generator</a></li>
                     </ul>
                     <ul class="navbar-nav ms-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
@@ -47,6 +46,13 @@
             </div>
         </div>
     </nav>
+    {% if get_flashed_messages() %}
+        <header>
+            <div class="alert alert-primary mb-0 text-center" role="alert">
+                {{ get_flashed_messages() | join(" ") }}
+            </div>
+        </header>
+    {% endif %}
     {% block main %}
     {% endblock %}
 </body>
