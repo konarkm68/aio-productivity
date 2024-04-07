@@ -1,21 +1,68 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    index
+  All-in-One Productivity Hub
 {% endblock %}
 
 {% block main %}
+  <section class="hero">
+    <h1 class="hero-heading text-center">Hi, {{ user }}!</h1>
+    <p class="hero-quote text-center"><strong>{{ quote }}</strong> ~ <strong>{{ author }}</strong></p>
+    <p class="hero-description text-center">
+      One-stop productivity shop by
+      <span class="creator-name">
+        <a href="https://github.com/rashitha1d">rashitha1d</a>
+      </span>
+      &
+      <span class="creator-name">
+        <a href="https://github.com/konarkm68">konarkm68</a>
+      </span>.
+    </p>
 
-    <p class="lead text-center">Hi, User!</p>
+    <p class="hero-features text-center">
+      <span>Note-taking app, </span>
+      <span>Quote generator, </span>
+      <span>Pomodoro timer,</span>
+      <span>and much more!</span>
+    </p>
+  </section>
 
-    <p><strong>{{ quote }}</strong></p>
-    <p><strong>                 ~{{ author }}</strong></p>
+  <section class="tasks">
+    <h2>Your Tasks</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th class="text-center">Task</th>
+          <th class="text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if not tasks %}
+          <tr>
+            <td class="text-center" colspan="2">
+              Let's get productive! Add some tasks to get started.
+            </td>
+          </tr>
+        {% endif %}
 
-    <div class="container text-center">
-        <p>This is your all-in-one productivity, made by rashitha1d & konarkm68, this website serves as a play
-        where all your producitivity needs are met, from a note taking app, to a quote generator and even a pomodoro timer app and much more
-        consider this the one stop shop for everything productivity!</p>
-    </div>
+        {% if tasks %}
+          {% for row in tasks %}
+            <tr>
+              <td class="text-start">{{ row.task }}</td>
+              <td class="text-center">
+                {% if row.status == "completed" %}
+                  <span class="badge bg-success">Completed</span>
+                {% elif row.status == "pending" %}
+                  <span class="badge bg-warning">Pending</span>
+                {% else %}
+                  {{ row.status }}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        {% endif %}
 
+      </tbody>
+    </table>
+  </section>
 {% endblock %}
-

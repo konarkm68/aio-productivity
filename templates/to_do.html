@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+  To-Do List
+{% endblock %}
+
+{% block main %}
+<section class="to-do-container container d-flex flex-column align-items-center justify-content-center">
+  <h1 class="text-center mb-4">To-Do List</h1>
+
+  <form action="/to_do" method="POST" class="mb-4">
+    <div class="input-group">
+      <input type="text" class="form-control form-control-lg" placeholder="Enter your task..." name="task">
+      <button type="submit" class="btn btn-primary">Add Task!</button>
+    </div>
+  </form>
+
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th class="text-center">Task</th>
+        <th class="text-center">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if not tasks %}
+        <tr>
+          <td class="text-center" colspan="2">
+            Let's get productive! Add some tasks to get started.
+          </td>
+        </tr>
+      {% else %}
+        {% for row in tasks %}
+          <tr>
+            <td class="text-start">{{ row.task }}</td>
+            <td class="text-center">
+              {% if row.status == "completed" %}
+                <span class="badge bg-success">Completed</span>
+              {% elif row.status == "pending" %}
+                <span class="badge bg-warning">Pending</span>
+              {% else %}
+                {{ row.status }}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      {% endif %}
+
+    </tbody>
+  </table>
+</section>
+
+<script src="{{ url_for('static', filename='todo.js') }}"></script>
+{% endblock %}

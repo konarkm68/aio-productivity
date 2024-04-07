@@ -1,27 +1,32 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Log in
+  Register
 {% endblock %}
 
 {% block main %}
+<section class="register-container container d-flex flex-column align-items-center justify-content-center">
+  <h1 class="text-center mb-4">Register</h1>
 
-    <form action="/register" method="post">
-        <h1 class="text-center">Register</h1>
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" type="text">
-        </div>
-        <div class="mb-3">
-            <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password">
-        </div>
-        <div class="mb-3">
-            <input class="form-control mx-auto w-auto" id="password" name="confirmation" placeholder="Re-type the password" type="password">
-        </div>
-        {% if error %}
-            <p class="mb-3">{{ error }}</p>
-        {% endif %}
-        <button class="btn btn-primary mx-auto d-block" type="submit">Submit</submit>
-    </form>
+  <form action="/register" method="post" class="mb-4">
+    {% if error %}
+      <div class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
+    {% endif %}
+    <div class="form-group">
+      <input type="text" class="form-control" id="username" name="username" autocomplete="off" autofocus  placeholder="Username">
+    </div>
     <br>
-
+    <div class="form-group">
+      <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+    </div>
+    <br>
+    <div class="form-group">
+      <input type="password" class="form-control" id="confirmation" name="confirmation" placeholder="Confirm Password">
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Register</button>
+  </form>
+</section>
 {% endblock %}

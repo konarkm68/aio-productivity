@@ -36,18 +36,26 @@ def after_request(response):
 @app.route("/")
 @login_required
 def index():
-    category = 'inspirational'
+    user = db.execute("SELECT username FROM users WHERE id=?", session.get("user_id"))[0]["username"]
+
+
+    category = 'future'
     api_url = 'https://api.api-ninjas.com/v1/quotes?category={}'.format(category)
     response = requests.get(api_url, headers={'X-Api-Key': 'JPoUeHK/XTHGgNtjCufFyQ==tn0KdgTRnXFP3mVh'})
     if response.status_code == requests.codes.ok:
         response = response.json()[0]
     else:
         flash("Error:", response.status_code, response.text)
-    return render_template("index.html", quote=response["quote"], author=response["author"])
 
-@app.route('/todo')
-def todo():
-    return render_template('todo.html')
+
+    #
+
+    return render_template("index.html", user=user, quote=response["quote"], author=response["author"])
+
+@app.route('/to_do', methods=["GET", "POST"])
+def to_do():
+    tasks = [{"task": "1", "status": "completed"}]
+    return render_template('to_do.html', tasks=tasks)
 
 @app.route('/add_task', methods=['POST'])
 def add_task():
