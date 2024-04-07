@@ -54,8 +54,29 @@ def index():
 
 @app.route('/to_do', methods=["GET", "POST"])
 def to_do():
-    tasks = [{"task": "1", "status": "completed"}]
-    return render_template('to_do.html', tasks=tasks)
+    # tasks = [{"task": "1", "status": "completed"}]
+    if request.method == "POST":
+        task = request.form.get("task")
+
+        category = request.form.get("category") or "uncategorized"
+        status = request.form.get("status") or "not started"
+
+        db.execute("INSERT INTO todo (todo, category, status, user_id) VALUES (?, ?, ?, ?)",
+                   task, category, status, session["user_id"])
+
+        return redirect(url_for('to_do'))
+
+    tasks = db.execute("SELECT * FROM todo WHERE user_id = ?", session["user_id"])
+
+    return render_template("to_do.html", tasks=tasks)
+
+@app.route('/deletetask', methods=["GET", "POST"])
+def deletetask():
+    task_id = int(request.form.get("task_id"))
+
+    db.execute("DELETE from todo WHERE id = ? AND user_id = ?", int(task_id), (session["user_id"]))
+
+    return redirect(url_for('to_do'))
 
 @app.route('/add_task', methods=['POST'])
 def add_task():
