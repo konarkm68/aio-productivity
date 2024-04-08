@@ -5,6 +5,7 @@ from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
+from icecream import ic
 
 from helpers import apology, login_required
 
@@ -38,7 +39,6 @@ def after_request(response):
 def index():
     user = db.execute("SELECT username FROM users WHERE id=?", session.get("user_id"))[0]["username"]
 
-
     category = 'future'
     api_url = 'https://api.api-ninjas.com/v1/quotes?category={}'.format(category)
     response = requests.get(api_url, headers={'X-Api-Key': 'JPoUeHK/XTHGgNtjCufFyQ==tn0KdgTRnXFP3mVh'})
@@ -47,54 +47,42 @@ def index():
     else:
         flash("Error:", response.status_code, response.text)
 
-
-    #
-
     return render_template("index.html", user=user, quote=response["quote"], author=response["author"])
 
-@app.route('/to_do', methods=["GET", "POST"])
-def to_do():
-    # tasks = [{"task": "1", "status": "completed"}]
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """Register user"""
     if request.method == "POST":
-        task = request.form.get("task")
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirmation = request.form.get("confirmation")
 
-        category = request.form.get("category") or "uncategorized"
-        status = request.form.get("status") or "not started"
+        if (
+            not request.form.get("username")
+            or not request.form.get("password")
+            or not request.form.get("confirmation")
+        ):
+            return apology("must provide username and password", 400)
 
-        db.execute("INSERT INTO todo (todo, category, status, user_id) VALUES (?, ?, ?, ?)",
-                   task, category, status, session["user_id"])
+        if password != confirmation:
+            return apology("passwords must match", 400)
+        rows = db.execute("SELECT * FROM users WHERE username = ?", username)
+        if not rows:
+            hashed_password = generate_password_hash(
+                password, method="pbkdf2:sha256", salt_length=16
+            )
+            db.execute(
+                "INSERT INTO users (username, hash) VALUES (?, ?)",
+                username,
+                hashed_password,
+            )
+            return render_template("register.html", error="Registration Successful!")
+        else:
+            return apology("username already taken", 400)
 
-        return redirect(url_for('to_do'))
+    return render_template("register.html")
 
-    tasks = db.execute("SELECT * FROM todo WHERE user_id = ?", session["user_id"])
-
-    return render_template("to_do.html", tasks=tasks)
-
-@app.route('/deletetask', methods=["GET", "POST"])
-def deletetask():
-    task_id = int(request.form.get("task_id"))
-
-    db.execute("DELETE from todo WHERE id = ? AND user_id = ?", int(task_id), (session["user_id"]))
-
-    return redirect(url_for('to_do'))
-
-@app.route('/add_task', methods=['POST'])
-def add_task():
-    task = request.form['task']
-    # Add code to store the task in your database or session
-    return redirect(url_for('todo'))
-
-@app.route('/pomodoro')
-def pomodoro():
-    return render_template('pomodoro.html')
-
-@app.route('/note')
-def note():
-    return render_template('note.html')
-
-@app.route('/quote')
-def quote():
-    return render_template('quote.html')
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -149,6 +137,36 @@ def logout():
     # Redirect user to login form
     return redirect("/")
 
+
+@app.route('/to_do')
+def to_do():
+    tasks = db.execute("SELECT todo, category, status FROM todo;")
+    ic(tasks)
+    return render_template("to_do.html", tasks=tasks)
+@app.route('/add_task', methods=['POST'])
+def add_task():
+    # TODO
+    pass
+@app.route('/del_task', methods=["POST"])
+def del_task():
+    # TODO
+    pass
+@app.route('/edit_task', methods=['POST'])
+def edit_task():
+    # TODO
+    pass
+
+
+@app.route('/pomodoro')
+def pomodoro():
+    return render_template('pomodoro.html')
+
+
+@app.route('/note')
+def note():
+    return render_template('note.html')
+
+
 @app.route("/changepassword", methods=["GET", "POST"])
 @login_required
 def changepassword():
@@ -188,37 +206,3 @@ def changepassword():
             flash("Password changed!")
 
     return render_template("changepassword.html")
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    """Register user"""
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        confirmation = request.form.get("confirmation")
-
-        if (
-            not request.form.get("username")
-            or not request.form.get("password")
-            or not request.form.get("confirmation")
-        ):
-            return apology("must provide username and password", 400)
-
-        if password != confirmation:
-            return apology("passwords must match", 400)
-        rows = db.execute("SELECT * FROM users WHERE username = ?", username)
-        if not rows:
-            hashed_password = generate_password_hash(
-                password, method="pbkdf2:sha256", salt_length=16
-            )
-            db.execute(
-                "INSERT INTO users (username, hash) VALUES (?, ?)",
-                username,
-                hashed_password,
-            )
-            return render_template("register.html", error="Registration Successful!")
-        else:
-            return apology("username already taken", 400)
-
-    return render_template("register.html")
-
