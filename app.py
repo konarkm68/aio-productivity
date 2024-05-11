@@ -140,7 +140,7 @@ def logout():
 
 @app.route('/to_do', methods=["GET"])
 def to_do():
-    tasks = db.execute("SELECT * FROM todo WHERE user_id = ?", session["user_id"])
+    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
 
     return render_template("to_do.html", tasks=tasks)
 @app.route('/add_task', methods=['POST'])
@@ -149,7 +149,7 @@ def add_task():
     category = request.form.get("category") or "uncategorized"
     status = request.form.get("status") or "not started"
 
-    db.execute("INSERT INTO todo (task, category, status, user_id) VALUES (?, ?, ?, ?)", task, category, status, session["user_id"])
+    db.execute("INSERT INTO tasks (task, category, status, user_id) VALUES (?, ?, ?, ?)", task, category, status, session["user_id"])
 
     return redirect(url_for('to_do'))
 @app.route('/edit_task', methods=['POST'])
@@ -159,7 +159,7 @@ def edit_task():
 @app.route('/del_task', methods=["GET", "POST"])
 def del_task():
     ic(request.form.get("task_id"))
-    db.execute("DELETE from todo WHERE id = ? AND user_id = ?", request.form.get("task_id"), session["user_id"])
+    db.execute("DELETE from tasks WHERE id = ? AND user_id = ?", request.form.get("task_id"), session["user_id"])
 
     return redirect(url_for('to_do'))
 
