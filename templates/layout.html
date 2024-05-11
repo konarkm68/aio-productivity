@@ -29,30 +29,30 @@
           </li>
           {% if session["user_id"] %}
             <li class="nav-item">
-              <a class="nav-link" href="/tasks">To-Do</a>
+              <a class="nav-link" href="/tasks">Tasks</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/pomodoro">Pomodoro</a>
+              <a class="nav-link" href="/notes">Notes</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/notes">Note-Taking</a>
+              <a class="nav-link" href="/pomodoro">Pomodoro-Timers</a>
             </li>
           {% endif %}
         </ul>
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           {% if session["user_id"] %}
             <li class="nav-item">
-              <a class="nav-link" href="/logout">Log Out</a>
+              <a class="nav-link" href="/logout">Log-out</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/profile">Profile</a>
+              <a class="nav-link" href="/profile">User-Profile</a>
             </li>
           {% else %}
             <li class="nav-item">
               <a class="nav-link" href="/register">Register</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/login">Log In</a>
+              <a class="nav-link" href="/login">Log-in</a>
             </li>
           {% endif %}
         </ul>
