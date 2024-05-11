@@ -191,8 +191,8 @@ def note():
 
     return render_template('note.html', notes=notes)
 
-@app.route('/deletenote', methods=["GET", "POST"])
-def deletenote():
+@app.route('/del_note', methods=["POST"])
+def del_note():
     note_id = request.form.get("note_id")
     print("Note ID:", note_id)
 

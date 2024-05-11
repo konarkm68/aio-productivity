@@ -42,7 +42,7 @@
             {{ row.category }}
           </td>
           <td class="text-center">
-            <form action="/deletenote" method="POST" class="mb-4">
+            <form action="/del_note" method="POST" class="mb-4">
               <input type="hidden" name="note_id" value="{{ row.note_id }}">
               <button type="submit" class="btn btn-primary">Delete</button>
             </form>
