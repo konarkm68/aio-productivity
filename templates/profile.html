@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Profile
+{% endblock %}
+
+
+{% block main %}
+    <form action="/profile" method="post">
+        <div class="mb-3">
+            <label>User-Name: </label>
+            <input autocomplete="off" class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" value="{{ username }}" readonly=true type="text">
+        </div>
+        <div class="mb-3">
+            <label>Available Cash for trades: </label>
+            <input autocomplete="off" class="form-control mx-auto w-auto" id="cash" name="cash" placeholder="Cash" value="{{ cash }}" readonly=true type="text">
+        </div>
+        </span>
+        <div class="mb-3">
+            <input autofocus class="form-control mx-auto w-auto" id="old_pass" name="old_pass" placeholder="Old Password" type="password">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="new_pass" name="new_pass" placeholder="New Password" type="password">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="confirmation" name="confirmation" placeholder="Confirm New Password" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit">Update Password!</button>
+    </form>
+{% endblock %}
