@@ -138,11 +138,11 @@ def logout():
     return redirect("/")
 
 
-@app.route('/to_do', methods=["GET"])
-def to_do():
+@app.route('/tasks', methods=["GET"])
+def tasks():
     tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
 
-    return render_template("to_do.html", tasks=tasks)
+    return render_template("tasks.html", tasks=tasks)
 @app.route('/add_task', methods=['POST'])
 def add_task():
     task = request.form.get("task")
@@ -151,17 +151,17 @@ def add_task():
 
     db.execute("INSERT INTO tasks (task, category, status, user_id) VALUES (?, ?, ?, ?)", task, category, status, session["user_id"])
 
-    return redirect(url_for('to_do'))
+    return redirect(url_for('tasks'))
 @app.route('/edit_task', methods=['POST'])
 def edit_task():
     # TODO
     pass
-@app.route('/del_task', methods=["GET", "POST"])
+@app.route('/del_task', methods=["POST"])
 def del_task():
     ic(request.form.get("task_id"))
     db.execute("DELETE from tasks WHERE id = ? AND user_id = ?", request.form.get("task_id"), session["user_id"])
 
-    return redirect(url_for('to_do'))
+    return redirect(url_for('tasks'))
 
 @app.route('/pomodoro')
 def pomodoro():
