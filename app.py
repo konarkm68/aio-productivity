@@ -143,14 +143,6 @@ def to_do():
     tasks = db.execute("SELECT * FROM todo WHERE user_id = ?", session["user_id"])
 
     return render_template("to_do.html", tasks=tasks)
-
-@app.route('/del_task', methods=["GET", "POST"])
-def del_task():
-    ic(request.form.get("task_id"))
-    db.execute("DELETE from todo WHERE id = ? AND user_id = ?", request.form.get("task_id"), session["user_id"])
-
-    return redirect(url_for('to_do'))
-
 @app.route('/add_task', methods=['POST'])
 def add_task():
     task = request.form.get("task")
@@ -160,42 +152,46 @@ def add_task():
     db.execute("INSERT INTO todo (todo, category, status, user_id) VALUES (?, ?, ?, ?)", task, category, status, session["user_id"])
 
     return redirect(url_for('to_do'))
-
 @app.route('/edit_task', methods=['POST'])
 def edit_task():
     # TODO
     pass
+@app.route('/del_task', methods=["GET", "POST"])
+def del_task():
+    ic(request.form.get("task_id"))
+    db.execute("DELETE from todo WHERE id = ? AND user_id = ?", request.form.get("task_id"), session["user_id"])
 
+    return redirect(url_for('to_do'))
 
 @app.route('/pomodoro')
 def pomodoro():
     return render_template('pomodoro.html')
 
 
-@app.route('/note', methods=["GET", "POST"])
+@app.route('/note', methods=["GET"])
 def note():
-    if request.method == "POST":
-        note = request.form.get("note")
-
-        if not note:
-            note = "empty"
-
-        category = request.form.get("category") or "uncategorized"
-
-        db.execute("INSERT INTO note (note, category, user_id) VALUES (?, ?, ?)",
-                   note, category, session["user_id"])
-
-        return redirect(url_for('note'))
-
     notes = db.execute("SELECT * FROM note WHERE user_id = ?", session["user_id"])
 
     return render_template('note.html', notes=notes)
+@app.route('/add_note', methods=["POST"])
+def add_note():
+    note = request.form.get("note")
 
+    if not note:
+        note = "empty"
+
+    category = request.form.get("category") or "uncategorized"
+
+    db.execute("INSERT INTO note (note, category, user_id) VALUES (?, ?, ?)",
+                note, category, session["user_id"])
+
+    return redirect(url_for('note'))
 @app.route('/del_note', methods=["POST"])
 def del_note():
     db.execute("DELETE from note WHERE note_id = ? AND user_id = ?", request.form.get("note_id"), session["user_id"])
 
     return redirect(url_for('note'))
+
 
 @app.route("/changepassword", methods=["GET", "POST"])
 @login_required
