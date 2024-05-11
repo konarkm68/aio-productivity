@@ -8,17 +8,51 @@
 <section class="note-taking-container container d-flex flex-column">
   <h1 class="text-center mb-4">Note Taking</h1>
 
-  <form class="mb-4">
+  <form action="/note" method="POST" class="mb-4">
     <div class="input-group mb-3">
-      <textarea class="form-control" id="noteInput" placeholder="Enter your note here..." rows="5"></textarea>
+      <textarea class="form-control" id="noteInput" name="note" placeholder="Enter your note here..." rows="5"></textarea>
       <div class="input-group-append">
         <button type="submit" class="btn btn-primary">Add Note</button>
       </div>
     </div>
   </form>
 
-  <div class="notes-container p-3 border rounded shadow-sm">
-    </div>
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th class="text-center">Task</th>
+        <th class="text-center">Category</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if not notes %}
+        <tr>
+          <td class="text-center" colspan="4">
+            Get your Notepad out & jot down your thoughts!
+          </td>
+        </tr>
+      {% else %}
+       {% for row in notes %}
+        <tr>
+          <td class="text-center">
+            {{ ' '.join(row.note.split()[:15]) }}{% if row.note.split()|length > 15 %}...{% endif %}
+          </td>
+          <td class="text-center">
+            {{ row.category }}
+          </td>
+          <td class="text-center">
+            <form action="/deletenote" method="POST" class="mb-4">
+              <input type="hidden" name="note_id" value="{{ row.note_id }}">
+              <button type="submit" class="btn btn-primary">Delete</button>
+            </form>
+          </td>
+        </tr>
+
+        {% endfor %}
+       {% endif %}
+
+    </tbody>
 </section>
 
 {% endblock %}

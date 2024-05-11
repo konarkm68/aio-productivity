@@ -5,11 +5,53 @@
 {% endblock %}
 
 {% block main %}
-<section class="pomodoro-container container d-flex flex-column align-items-center justify-content-center">
-  <h1 class="text-center mb-4">Pomodoro Timer</h1>
+<div class="container mt-3">
+  <h1 class="text-center mb-4">Tabbed Pomodoro Timer</h1>
+  <ul class="nav nav-tabs justify-content-center mb-3">
+    <li class="nav-item">
+      <a class="nav-link active" data-bs-toggle="tab" href="#pomodoro">Pomodoro (25 mins.)</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="tab" href="#short-break">Short Break (5 mins.)</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="tab" href="#long-break">Long Break (15 mins.)</a>
+    </li>
+  </ul>
 
-  <div class="timer-display display-2 fs-1 text-center mb-4">25:00</div>
+  <div class="tab-content">
+    <div class="tab-pane active" id="pomodoro">
+      <div class="timer-container">
+        <div class="timer-display">25:00</div>
+        <div class="controls">
+          <button class="btn btn-primary btn-lg start-button" type="button">Start</button>
+          <button class="btn btn-secondary btn-lg stop-button" type="button" disabled="true">Pause</button>
+        </div>
+        <audio id="pomodoro-bell" src="/static/bell.mp3" preload="auto"></audio>
+      </div>
+    </div>
+    <div class="tab-pane" id="short-break">
+      <div class="timer-container">
+        <div class="timer-display">05:00</div>
+        <div class="controls">
+          <button class="btn btn-primary btn-lg start-button" type="button">Start</button>
+          <button class="btn btn-secondary btn-lg stop-button" type="button" disabled="true">Pause</button>
+        </div>
+        <audio id="break-bell" src="/static/break-bell.mp3" preload="auto"></audio>
+      </div>
+    </div>
+    <div class="tab-pane" id="long-break">
+      <div class="timer-container">
+        <div class="timer-display">15:00</div>
+        <div class="controls">
+          <button class="btn btn-primary btn-lg start-button" type="button">Start</button>
+          <button class="btn btn-secondary btn-lg stop-button" type="button" disabled="true">Pause</button>
+        </div>
+        <audio id="long-break-bell" src="/static/long-break-bell.mp3" (optional) preload="auto"></audio>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <button class="btn btn-primary btn-lg" type="button">Start</button>
-</section>
+<script src="static/pomodoro.js"></script>
 {% endblock %}
