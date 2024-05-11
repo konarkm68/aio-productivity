@@ -168,11 +168,11 @@ def pomodoro():
     return render_template('pomodoro.html')
 
 
-@app.route('/note', methods=["GET"])
-def note():
+@app.route('/notes', methods=["GET"])
+def notes():
     notes = db.execute("SELECT * FROM notes WHERE user_id = ?", session["user_id"])
 
-    return render_template('note.html', notes=notes)
+    return render_template('notes.html', notes=notes)
 @app.route('/add_note', methods=["POST"])
 def add_note():
     note = request.form.get("note")
@@ -185,12 +185,12 @@ def add_note():
     db.execute("INSERT INTO notes (note, category, user_id) VALUES (?, ?, ?)",
                 note, category, session["user_id"])
 
-    return redirect(url_for('note'))
+    return redirect(url_for('notes'))
 @app.route('/del_note', methods=["POST"])
 def del_note():
     db.execute("DELETE from notes WHERE id = ? AND user_id = ?", request.form.get("note_id"), session["user_id"])
 
-    return redirect(url_for('note'))
+    return redirect(url_for('notes'))
 
 
 @app.route("/changepassword", methods=["GET", "POST"])
