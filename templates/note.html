@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-  Note Taking
+  Note Taking
 {% endblock %}
 
 {% block main %}
@@ -10,7 +10,8 @@
 
   <form action="/note" method="POST" class="mb-4">
     <div class="input-group mb-3">
-      <textarea class="form-control" id="noteInput" name="note" placeholder="Enter your note here..." rows="5"></textarea>
+      <label for="noteInput" class="visually-hidden">Note</label>
+      <textarea class="form-control" id="noteInput" name="note" placeholder="Write down your ideas, reminders, or anything you want to remember..." rows="5"></textarea>
       <div class="input-group-append">
         <button type="submit" class="btn btn-primary">Add Note</button>
       </div>
@@ -21,38 +22,33 @@
     <thead>
       <tr>
         <th class="text-center">Note</th>
-        <!--<th class="text-center">Category</th>-->
         <th class="text-center">Actions</th>
       </tr>
     </thead>
     <tbody>
       {% if not notes %}
-        <tr>
-          <td class="text-center" colspan="2">
-            Get your Notepad out & jot down your thoughts!
-          </td>
-        </tr>
+      <tr>
+        <td class="text-center" colspan="2">
+          Get your Notepad out & jot down your thoughts!
+        </td>
+      </tr>
       {% else %}
-       {% for row in notes %}
-        <tr>
-          <td class="text-center">
-            {{ ' '.join(row.note.split()[:15]) }}{% if row.note.split()|length > 15 %}...{% endif %}
-          </td>
-          <!--<td class="text-center">
-            {{ row.category }}
-          </td>-->
-          <td class="text-center">
-            <form action="/del_note" method="POST" class="mb-4">
-              <input type="hidden" name="note_id" value="{{ row.note_id }}">
-              <button type="submit" class="btn btn-primary">Delete</button>
-            </form>
-          </td>
-        </tr>
-
-        {% endfor %}
-       {% endif %}
-
+      {% for row in notes %}
+      <tr>
+        <td class="text-center">
+          {{ ' '.join(row.note.split()[:15]) }}{% if row.note.split()|length > 15 %}...{% endif %}
+        </td>
+        <td class="text-center">
+          <form action="/del_note" method="POST" class="mb-4">
+            <input type="hidden" name="note_id" value="{{ row.note_id }}">
+            <button type="submit" class="btn btn-primary">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      {% endif %}
     </tbody>
+  </table>
 </section>
 
 {% endblock %}

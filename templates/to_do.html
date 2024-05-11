@@ -19,7 +19,7 @@
     <thead>
       <tr>
         <th class="text-center">Task</th>
-        <th class="text-center">Category</th>
+        <!--<th class="text-center">Category</th>-->
         <th class="text-center">Status</th>
         <th class="text-center">Actions</th>
       </tr>
@@ -27,7 +27,7 @@
     <tbody>
       {% if not tasks %}
         <tr>
-          <td class="text-center" colspan="4">
+          <td class="text-center" colspan="3">
             Let's get productive! Add some tasks to get started.
           </td>
         </tr>
@@ -35,9 +35,9 @@
         {% for row in tasks %}
           <tr>
             <td class="text-start">{{ row.todo }}</td>
-            <td class="text-center">
+            <!--<td class="text-center">
               {{ row.category }}
-            </td>
+            </td>-->
             <td class="text-center">
               {% if row.status == "completed" %}
                 <span class="badge bg-success">Completed</span>
