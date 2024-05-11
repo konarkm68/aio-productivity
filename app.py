@@ -193,16 +193,7 @@ def note():
 
 @app.route('/del_note', methods=["POST"])
 def del_note():
-    note_id = request.form.get("note_id")
-    print("Note ID:", note_id)
-
-    if note_id is not None and note_id != '':
-        note_id = int(note_id)
-    else:
-        # Redirect back to previous page or display an error message
-        return redirect(request.referrer)
-
-    db.execute("DELETE from note WHERE note_id = ? AND user_id = ?", (note_id, session["user_id"]))
+    db.execute("DELETE from note WHERE note_id = ? AND user_id = ?", request.form.get("note_id"), session["user_id"])
 
     return redirect(url_for('note'))
 
