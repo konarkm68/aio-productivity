@@ -6,23 +6,23 @@
 
 
 {% block main %}
-  <form action="/profile" method="post" class="profile-update-form">
-    <h2 class="mb-4">Profile</h2>
-    <div class="mb-3">
-      <label for="username">Username:</label>
-      <input autocomplete="off" type="text" class="form-control" id="username" name="username" placeholder="Username" value="{{ username }}" readonly>
-    </div>
-    <div class="mb-3">
-      <label for="old_pass">Current Password:</label>
-      <input type="password" class="form-control" id="old_pass" name="old_pass" placeholder="Current Password" required>
-    </div>
-    <div class="mb-3">
-      <label for="new_pass">New Password:</label>
-      <input type="password" class="form-control" id="new_pass" name="new_pass" placeholder="New Password" required minlength="8"> </div>
-    <div class="mb-3">
-      <label for="confirmation">Confirm New Password:</label>
-      <input type="password" class="form-control" id="confirmation" name="confirmation" placeholder="Confirm New Password" required>
-    </div>
-    <button class="btn btn-primary" type="submit">Update Password</button>
-  </form>
+  <div class="container mt-5">  <form action="/profile" method="post" class="profile-update-form d-flex flex-column justify-content-center align-items-center">
+      <div class="mb-3">
+        <label for="username">Username:</label>
+        <input autocomplete="off" type="text" class="form-control" id="username" name="username" placeholder="Username" value="{{ username }}" readonly>
+      </div>
+      <div class="mb-3">
+        <label for="old_pass">Current Password:</label>
+        <input type="password" class="form-control" id="old_pass" name="old_pass" placeholder="Current Password" required>
+      </div>
+      <div class="mb-3">
+        <label for="new_pass">New Password:</label>
+        <input type="password" class="form-control" id="new_pass" name="new_pass" placeholder="New Password" required minlength="8"> </div>
+      <div class="mb-3">
+        <label for="confirmation">Confirm New Password:</label>
+        <input type="password" class="form-control" id="confirmation" name="confirmation" placeholder="Confirm New Password" required>
+      </div>
+      <button class="btn btn-primary" type="submit">Update Password</button>
+    </form>
+  </div>
 {% endblock %}
