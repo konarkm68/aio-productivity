@@ -170,7 +170,7 @@ def pomodoro():
 
 @app.route('/note', methods=["GET"])
 def note():
-    notes = db.execute("SELECT * FROM note WHERE user_id = ?", session["user_id"])
+    notes = db.execute("SELECT * FROM notes WHERE user_id = ?", session["user_id"])
 
     return render_template('note.html', notes=notes)
 @app.route('/add_note', methods=["POST"])
@@ -182,13 +182,13 @@ def add_note():
 
     category = request.form.get("category") or "uncategorized"
 
-    db.execute("INSERT INTO note (note, category, user_id) VALUES (?, ?, ?)",
+    db.execute("INSERT INTO notes (note, category, user_id) VALUES (?, ?, ?)",
                 note, category, session["user_id"])
 
     return redirect(url_for('note'))
 @app.route('/del_note', methods=["POST"])
 def del_note():
-    db.execute("DELETE from note WHERE note_id = ? AND user_id = ?", request.form.get("note_id"), session["user_id"])
+    db.execute("DELETE from notes WHERE id = ? AND user_id = ?", request.form.get("note_id"), session["user_id"])
 
     return redirect(url_for('note'))
 
