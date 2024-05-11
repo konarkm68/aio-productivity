@@ -193,42 +193,50 @@ def del_note():
     return redirect(url_for('notes'))
 
 
-@app.route("/changepassword", methods=["GET", "POST"])
+@app.route("/profile", methods=["GET", "POST"])
 @login_required
-def changepassword():
-    """change password"""
+def profile():
+    """Modify User Profile"""
+
+    user = db.execute("""
+SELECT * FROM users
+WHERE id=?
+;""", session.get("user_id"))[0]
+
+    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-        username = request.form.get("username")
-        oldpassword = request.form.get("oldpassword")
-        newpassword = request.form.get("newpassword")
 
-        if not request.form.get("username"):
-            return apology("must provide username", 403)
+        old_pass = request.form.get("old_pass")
+        new_pass = request.form.get("new_pass")
+        confirmation = request.form.get("confirmation")
 
-        elif not request.form.get("oldpassword"):
-            return apology("must provide password", 403)
+        # Generate Password & Confirm Password Hash
+        # p_hash = generate_password_hash(password)
+        c_hash = generate_password_hash(confirmation)
 
-        elif not request.form.get("newpassword"):
-            return apology("must provide password", 403)
+        # Ensure password was submitted
+        if not old_pass or not new_pass or not confirmation:
+            return apology("must provide old password and/or new password / confirm new password", 403)
 
-        rows = db.execute(
-            "SELECT * FROM users WHERE username = ?", request.form.get("username")
-        )
+        # Ensure old password is correct
+        if not check_password_hash(user["hash"], old_pass):
+            return apology("invalid old password", 403)
 
-        # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(
-            rows[0]["hash"], request.form.get("oldpassword")
-        ):
-            return apology("invalid username and/or password", 403)
-        else:
-            hashed_password = generate_password_hash(
-                newpassword, method="pbkdf2:sha256", salt_length=16
-            )
-            db.execute(
-                "UPDATE users SET hash = ? WHERE username = ?",
-                hashed_password,
-                username,
-            )
-            flash("Password changed!")
+        if old_pass == new_pass:
+            return apology("old password and new password should not match", 400)
 
-    return render_template("changepassword.html")
+        if new_pass != confirmation:
+            return apology("new password and confirm new password should match", 400)
+
+        # Query to insert user
+        db.execute("""
+UPDATE users
+SET hash=?
+WHERE id=?
+;""", c_hash, user["id"])
+
+        flash("Updated Password!")
+
+        return redirect("/")
+
+    return render_template("profile.html", username=user["username"])
