@@ -149,7 +149,7 @@ def add_task():
     category = request.form.get("category") or "uncategorized"
     status = request.form.get("status") or "not started"
 
-    db.execute("INSERT INTO todo (todo, category, status, user_id) VALUES (?, ?, ?, ?)", task, category, status, session["user_id"])
+    db.execute("INSERT INTO todo (task, category, status, user_id) VALUES (?, ?, ?, ?)", task, category, status, session["user_id"])
 
     return redirect(url_for('to_do'))
 @app.route('/edit_task', methods=['POST'])
