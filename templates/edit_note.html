@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}
+  Edit Note
+{% endblock %}
+
+{% block main %}
+<section class="note-taking-container container d-flex flex-column">
+  <h1 class="text-center mb-4">Edit Note</h1>
+
+  <form action="/update_note/{{ note.id }}" method="POST" class="mb-4">
+    <div class="input-group mb-3">
+      <label for="noteInput" class="visually-hidden">Note</label>
+      <textarea class="form-control" id="noteInput" name="note" rows="5">{{ note.note }}</textarea>
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-primary">Update Note</button>
+      </div>
+    </div>
+  </form>
+</section>
+{% endblock %}

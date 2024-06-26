@@ -33,6 +33,23 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+def count_tasks_group_by_status(tasks):
+    tasks_status_count = {
+        "not started": 0,
+        "in progress": 0,
+        "pending": 0,
+        "completed": 0
+    }
+    for i in tasks:
+        if i["status"] == "not started":
+            tasks_status_count["not started"] += 1
+        elif i["status"] == "in progress":
+            tasks_status_count["in progress"] += 1
+        elif i["status"] == "pending":
+            tasks_status_count["pending"] += 1
+        elif i["status"] == "completed":
+            tasks_status_count["completed"] += 1
+    return tasks_status_count
 
 @app.route("/")
 @login_required
@@ -47,7 +64,9 @@ def index():
     else:
         flash("Error:", response.status_code, response.text)
 
-    return render_template("index.html", user=user, quote=response["quote"], author=response["author"])
+    tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?;", session["user_id"])
+
+    return render_template("index.html", user=user, quote=response["quote"], author=response["author"], tasks=tasks, tasks_status_counter=count_tasks_group_by_status(tasks))
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -142,7 +161,8 @@ def logout():
 def tasks():
     tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
 
-    return render_template("tasks.html", tasks=tasks)
+    return render_template("tasks.html", tasks=tasks, tasks_status_counter=count_tasks_group_by_status(tasks))
+
 @app.route('/add_task', methods=['POST'])
 def add_task():
     task = request.form.get("task")
@@ -152,15 +172,27 @@ def add_task():
     db.execute("INSERT INTO tasks (task, category, status, user_id) VALUES (?, ?, ?, ?)", task, category, status, session["user_id"])
 
     return redirect(url_for('tasks'))
-@app.route('/edit_task', methods=['POST'])
-def edit_task():
-    # TODO
-    pass
+
 @app.route('/del_task', methods=["POST"])
 def del_task():
     ic(request.form.get("task_id"))
     db.execute("DELETE from tasks WHERE id = ? AND user_id = ?", request.form.get("task_id"), session["user_id"])
 
+    return redirect(url_for('tasks'))
+
+@app.route('/edit_task/<int:task_id>', methods=['GET'])
+def edit_task_route(task_id):
+    task = db.execute("SELECT * FROM tasks WHERE id = ? AND user_id = ?", task_id, session["user_id"])
+    if not task:
+        return apology("Task not found", 404)
+    return render_template("edit_task.html", task=task[0])
+
+@app.route('/update_task/<int:task_id>', methods=['POST'])
+def update_task_route(task_id):
+    new_task = request.form.get('task')
+    new_status = request.form.get('status')
+    db.execute("UPDATE tasks SET task = ?, status = ? WHERE id = ? AND user_id = ?", new_task, new_status, task_id, session["user_id"])
+    flash("Task updated successfully!")
     return redirect(url_for('tasks'))
 
 @app.route('/pomodoro')
@@ -186,12 +218,27 @@ def add_note():
                 note, category, session["user_id"])
 
     return redirect(url_for('notes'))
+
+
 @app.route('/del_note', methods=["POST"])
 def del_note():
     db.execute("DELETE from notes WHERE id = ? AND user_id = ?", request.form.get("note_id"), session["user_id"])
 
     return redirect(url_for('notes'))
 
+@app.route('/edit_note/<int:note_id>', methods=['GET'])
+def edit_note_route(note_id):
+    note = db.execute("SELECT * FROM notes WHERE id = ? AND user_id = ?", note_id, session["user_id"])
+    if not note:
+        return apology("Note not found", 404)
+    return render_template("edit_note.html", note=note[0])
+
+@app.route('/update_note/<int:note_id>', methods=['POST'])
+def update_note_route(note_id):
+    new_note = request.form.get('note')
+    db.execute("UPDATE notes SET note = ? WHERE id = ? AND user_id = ?", new_note, note_id, session["user_id"])
+    flash("Note updated successfully!")
+    return redirect(url_for('notes'))
 
 @app.route("/profile", methods=["GET", "POST"])
 @login_required

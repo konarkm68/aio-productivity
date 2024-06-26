@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+  Edit Task
+{% endblock %}
+
+{% block main %}
+<section class="to-do-container container d-flex flex-column">
+  <h1 class="text-center mb-4">Edit Task</h1>
+
+  <form action="/update_task/{{ task.id }}" method="POST" class="mb-4">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th class="text-center">Task</th>
+          <th class="text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="input-group mb-3">
+              <label for="taskInput" class="visually-hidden">Task</label>
+              <input type="text" class="form-control" id="taskInput" name="task" value="{{ task.task }}" required>
+            </div>
+          </td>
+          <td>
+            <div class="input-group mb-3">
+              <label for="statusSelect" class="visually-hidden">Status</label>
+              <select class="form-select" id="statusSelect" name="status" required>
+                <option value="in progress" {% if task.status == "in progress" %}selected{% endif %}>In-Progress</option>
+                <option value="pending" {% if task.status == "pending" %}selected{% endif %}>Pending</option>
+                <option value="completed" {% if task.status == "completed" %}selected{% endif %}>Completed</option>
+              </select>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="input-group-append">
+      <button type="submit" class="btn btn-primary">Update Task</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
