@@ -25,7 +25,7 @@
           {% elif status == "in progress" %}
             <span class="badge flex-grow-1 bg-warning text-dark float-right ">In-Progress: {{ count }}</span>
           {% elif status == "not started" %}
-            <span class="badge flex-grow-1 bg-info text-dark float-right">#TODO: {{ count }}</span>
+            <span class="badge flex-grow-1 bg-info text-dark float-right">To-Do: {{ count }}</span>
           {% endif %}
         {% endfor %}
       </div>
@@ -58,7 +58,7 @@
               {% elif row.status == "in progress" %}
                 <span class="badge bg-warning text-dark">In-Progress</span>
               {% elif row.status == "not started" %}
-                <span class="badge bg-info text-dark">#TODO</span>
+                <span class="badge bg-info text-dark">To-Do</span>
               {% else %}
                 {{ row.status }}
               {% endif %}
