@@ -11,9 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
   function updateTimerDisplay(timerDisplayElement, remainingTime) {
     const minutes = Math.floor(remainingTime / 60);
     const seconds = remainingTime % 60;
-    timerDisplayElement.textContent = `${minutes
-      .toString()
-      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    timerDisplayElement.textContent = `<span class="math-inline">\{minutes
+\.toString\(\)
+\.padStart\(2, "0"\)\}\:</span>{seconds.toString().padStart(2, "0")}`;
   }
 
   function handleTimer(
@@ -54,12 +54,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 nextTab.querySelector(".start-button").disabled = false;
               }
             }
+
+            // Request notification permission if not already granted
+            if (Notification.permission !== "granted") {
+              Notification.requestPermission().then((permission) => {
+                if (permission === "granted") {
+                  showNotification();
+                }
+              });
+            } else {
+              showNotification();
+            }
           }
         }, 1000);
         stopButton.disabled = false;
         startButton.disabled = true;
       }
     });
+
+    function showNotification() {
+      const notificationTitle = "Pomodoro Timer Ended";
+      const notificationBody = `Your ${currentTab.id.replace(/-/g, " ")} timer has finished!`;
+      const notification = new Notification(notificationTitle, {
+        body: notificationBody,
+        icon: "path/to/notification-icon.png", // Optional: Replace with your icon path
+      });
+    }
 
     stopButton.addEventListener("click", () => {
       if (timerInterval !== null) {
@@ -113,12 +133,4 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.querySelectorAll(".nav-link").forEach((tabLink) => {
-    tabLink.addEventListener("click", (event) => {
-      clearAllIntervals();
-      currentTab = document.querySelector(tabLink.getAttribute("href"));
-      initializeTimers();
-    });
-  });
-
-  initializeTimers();
-});
+    tabLink.
