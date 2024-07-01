@@ -26,6 +26,7 @@
         <div class="controls">
           <button class="btn btn-primary btn-lg start-button" type="button">Start</button>
           <button class="btn btn-secondary btn-lg stop-button" type="button" disabled="true">Pause</button>
+          <button class="btn btn-warning btn-lg reset-button" type="button">Reset</button>
         </div>
         <audio id="pomodoro-bell" src="/static/bell.mp3" preload="auto"></audio>
       </div>
@@ -36,6 +37,7 @@
         <div class="controls">
           <button class="btn btn-primary btn-lg start-button" type="button">Start</button>
           <button class="btn btn-secondary btn-lg stop-button" type="button" disabled="true">Pause</button>
+          <button class="btn btn-warning btn-lg reset-button" type="button">Reset</button>
         </div>
         <audio id="break-bell" src="/static/break-bell.mp3" preload="auto"></audio>
       </div>
@@ -46,12 +48,13 @@
         <div class="controls">
           <button class="btn btn-primary btn-lg start-button" type="button">Start</button>
           <button class="btn btn-secondary btn-lg stop-button" type="button" disabled="true">Pause</button>
+          <button class="btn btn-warning btn-lg reset-button" type="button">Reset</button>
         </div>
-        <audio id="long-break-bell" src="/static/long-break-bell.mp3" (optional) preload="auto"></audio>
+        <audio id="long-break-bell" src="/static/long-break-bell.mp3" preload="auto"></audio>
       </div>
     </div>
   </div>
 </div>
 
-<script src="static/pomodoro.js"></script>
+<script src="{{ url_for('static', filename='pomodoro.js') }}"></script>
 {% endblock %}
