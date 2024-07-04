@@ -1,31 +1,61 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const timerDisplays = document.querySelectorAll(".timer-display");
-  const startButtons = document.querySelectorAll(".start-button");
-  const stopButtons = document.querySelectorAll(".stop-button");
-  const resetButtons = document.querySelectorAll(".reset-button");
-  const audioElements = document.querySelectorAll("audio");
+  var timerDisplays = document.querySelectorAll(".timer-display");
+  var startButtons = document.querySelectorAll(".start-button");
+  var stopButtons = document.querySelectorAll(".stop-button");
+  var resetButtons = document.querySelectorAll(".reset-button");
+  var alarmSounds = document.querySelectorAll("audio");
 
-  let timerIntervals = [];
   let currentTab = document.querySelector(".tab-pane.active");
 
-  function updateTimerDisplay(timerDisplayElement, remainingTime) {
-    const minutes = Math.floor(remainingTime / 60);
-    const seconds = remainingTime % 60;
-    timerDisplayElement.textContent = `<span class="math-inline">\{minutes
-\.toString\(\)
-\.padStart\(2, "0"\)\}\:</span>{seconds.toString().padStart(2, "0")}`;
+  const POMODORO_TIME = 25 * 60;
+  const SHORT_BREAK = 5 * 60;
+  const LONG_BREAK = 15 * 60;
+
+  // Arrays of messages for Pomodoro and break endings
+  const pomodoroEndMessages = [
+    "Time's up! Take a well-deserved break.",
+    "Great work! Time to recharge.",
+    "Pomodoro complete! Stretch those muscles.",
+    "Nice focus session! How about a breather?",
+    "You've earned a pause. What's next on your break agenda?"
+  ];
+
+  const breakEndMessages = [
+    "Break's over! Ready to dive back in?",
+    "Refreshed and recharged? Let's get back to it!",
+    "Hope you enjoyed your break. Time to refocus!",
+    "Break time's up! What's your next big task?",
+    "Alright, let's kick off another productive session!"
+  ];
+
+  // Get Users permission on notifications, got to have consent you know...
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission();
   }
 
-  function handleTimer(
-    timerDisplayElement,
-    startButton,
-    stopButton,
-    resetButton,
-    audioElement,
-    initialTime
-  ) {
-    let remainingTime = initialTime;
-    let timerInterval = null;
+  function updateTimerDisplay(timerDisplayElement, remainingTime) {
+    var minutes = Math.floor(remainingTime / 60);
+    var seconds = remainingTime % 60;
+    timerDisplayElement.textContent = pad(minutes) + ':' + pad(seconds);
+  }
+
+  function pad(num) {
+    return ("0"+num).slice(-2);
+  }
+
+  function sendNotification(title, options) {
+    if (Notification.permission === "granted") {
+      new Notification(title, options);
+    }
+  }
+
+  function getRandomMessage(messageArray) {
+    return messageArray[Math.floor(Math.random() * messageArray.length)];
+  }
+
+  function TimerSetup(timerDisplayElement, startButton, stopButton, resetButton, alarmSound, initialTime) {
+    var remainingTime = initialTime;
+    var timerInterval = null;
 
     function resetTimer() {
       clearInterval(timerInterval);
@@ -36,53 +66,39 @@ document.addEventListener("DOMContentLoaded", function () {
       startButton.disabled = false;
     }
 
-    startButton.addEventListener("click", () => {
-      if (timerInterval === null) {
-        timerInterval = setInterval(() => {
+    startButton.onclick = function() {
+      if (!timerInterval) {
+        timerInterval = setInterval(function() {
           remainingTime--;
           updateTimerDisplay(timerDisplayElement, remainingTime);
 
-          if (remainingTime === 0) {
+          if (remainingTime <= 0) {
             clearInterval(timerInterval);
-            audioElement.play();
+            alarmSound.play();
             stopButton.disabled = true;
             startButton.disabled = false;
 
-            if (currentTab.id === "pomodoro") {
-              const nextTab = currentTab.nextElementSibling;
-              if (nextTab) {
-                nextTab.querySelector(".start-button").disabled = false;
-              }
-            }
+            var notificationTitle = "Pomodoro Timer";
+            var notificationBody = currentTab.id === "pomodoro" ?
+              getRandomMessage(pomodoroEndMessages) : getRandomMessage(breakEndMessages);
+            sendNotification(notificationTitle, {body: notificationBody, icon: "/static/tomato.png"});
 
-            // Request notification permission if not already granted
-            if (Notification.permission !== "granted") {
-              Notification.requestPermission().then((permission) => {
-                if (permission === "granted") {
-                  showNotification();
-                }
-              });
-            } else {
-              showNotification();
+            // Enable next timer (fingers crossed this works)
+            var tabs = Array.from(document.querySelectorAll('.tab-pane'));
+            var currentTabIndex = tabs.indexOf(currentTab);
+            var nextTab = tabs[(currentTabIndex + 1) % tabs.length];
+            if (nextTab) {
+              nextTab.querySelector(".start-button").disabled = false;
             }
           }
         }, 1000);
         stopButton.disabled = false;
         startButton.disabled = true;
       }
-    });
+    };
 
-    function showNotification() {
-      const notificationTitle = "Pomodoro Timer Ended";
-      const notificationBody = `Your ${currentTab.id.replace(/-/g, " ")} timer has finished!`;
-      const notification = new Notification(notificationTitle, {
-        body: notificationBody,
-        icon: "path/to/notification-icon.png", // Optional: Replace with your icon path
-      });
-    }
-
-    stopButton.addEventListener("click", () => {
-      if (timerInterval !== null) {
+    stopButton.addEventListener("click", function() {
+      if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
         stopButton.disabled = true;
@@ -92,45 +108,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
     resetButton.addEventListener("click", resetTimer);
 
-    resetTimer(); // Initialize the timer display and state
+    resetTimer(); // reset if you feel like going again
   }
 
   function initializeTimers() {
-    timerDisplays.forEach((timerDisplayElement, index) => {
-      const startButton = startButtons[index];
-      const stopButton = stopButtons[index];
-      const resetButton = resetButtons[index];
-      const audioElement = audioElements[index];
+    for (let i = 0; i < timerDisplays.length; i++) {
+      var timerDisplayElement = timerDisplays[i];
+      var startButton = startButtons[i];
+      var stopButton = stopButtons[i];
+      var resetButton = resetButtons[i];
+      var alarmSound = alarmSounds[i];
 
-      let initialTime;
-
+      var initialTime;
       switch (timerDisplayElement.closest(".tab-pane").id) {
         case "pomodoro":
-          initialTime = 25 * 60;
+          initialTime = POMODORO_TIME;
           break;
         case "short-break":
-          initialTime = 5 * 60;
+          initialTime = SHORT_BREAK;
           break;
         case "long-break":
-          initialTime = 15 * 60;
+          initialTime = LONG_BREAK;
           break;
+        default:
+          console.error("Unknown timer type"); // This probably never should happen
       }
 
-      handleTimer(
-        timerDisplayElement,
-        startButton,
-        stopButton,
-        resetButton,
-        audioElement,
-        initialTime
-      );
+      initialTime = 2; // FIXME: For testing purposes, once satsified, remove this line
+
+      TimerSetup(timerDisplayElement, startButton, stopButton, resetButton, alarmSound, initialTime);
+    }
+  }
+
+  // Switch tabs without breaking everything (hopefully)
+  document.querySelectorAll(".nav-link").forEach(function(tabLink) {
+    tabLink.addEventListener("click", function(event) {
+      currentTab = document.querySelector(tabLink.getAttribute("href"));
     });
-  }
+  });
 
-  function clearAllIntervals() {
-    timerIntervals.forEach((interval) => clearInterval(interval));
-    timerIntervals = [];
-  }
+  // Let's do it
+  initializeTimers();
 
-  document.querySelectorAll(".nav-link").forEach((tabLink) => {
-    tabLink.
+});
