@@ -9,7 +9,7 @@
     <h1 class="hero-heading text-center">Hi, {{ user }}!</h1>
     <p class="hero-quote text-center"><strong>{{ quote }}</strong> ~ <strong>{{ author }}</strong></p>
     <p class="hero-description text-center">
-      One-stop productivity shop by
+      One-stop shop for simple productivity by
       <span class="creator-name">
         <a href="https://github.com/rashitha1d">rashitha1d</a>
       </span>
@@ -39,7 +39,7 @@
           {% elif status == "in progress" %}
             <span class="badge flex-grow-1 bg-warning text-dark float-right ">In-Progress: {{ count }}</span>
           {% elif status == "not started" %}
-            <span class="badge flex-grow-1 bg-info text-dark float-right">#TODO: {{ count }}</span>
+            <span class="badge flex-grow-1 bg-info text-dark float-right">To-Do: {{ count }}</span>
           {% endif %}
         {% endfor %}
       </div>
