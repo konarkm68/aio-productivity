@@ -159,6 +159,9 @@ def logout():
 
 @app.route('/tasks', methods=["GET"])
 def tasks():
+    if ("user_id" not in session.keys()):
+        return redirect(url_for("login"))
+
     tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
 
     return render_template("tasks.html", tasks=tasks, tasks_status_counter=count_tasks_group_by_status(tasks))
@@ -197,11 +200,15 @@ def update_task_route(task_id):
 
 @app.route('/pomodoro')
 def pomodoro():
+    if ("user_id" not in session.keys()):
+        return redirect(url_for("login"))
     return render_template('pomodoro.html')
-
 
 @app.route('/notes', methods=["GET"])
 def notes():
+    if ("user_id" not in session.keys()):
+        return redirect(url_for("login"))
+
     notes = db.execute("SELECT * FROM notes WHERE user_id = ?", session["user_id"])
 
     return render_template('notes.html', notes=notes)
@@ -243,6 +250,9 @@ def update_note_route(note_id):
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
+    if ("user_id" not in session.keys()):
+        return redirect(url_for("login"))
+    
     """Modify User Profile"""
 
     user = db.execute("""

@@ -78,10 +78,10 @@ document.addEventListener("DOMContentLoaded", function () {
             stopButton.disabled = true;
             startButton.disabled = false;
 
-            var notificationTitle = "Pomodoro Timer";
+            var notificationTitle = "All-in-1 Pomodoro-Timers";
             var notificationBody = currentTab.id === "pomodoro" ?
               getRandomMessage(pomodoroEndMessages) : getRandomMessage(breakEndMessages);
-            sendNotification(notificationTitle, {body: notificationBody, icon: "/static/tomato.png"});
+            sendNotification(notificationTitle, {body: notificationBody, icon: "/static/ico.png"});
 
             // Enable next timer (fingers crossed this works)
             var tabs = Array.from(document.querySelectorAll('.tab-pane'));
