@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
   var startButtons = document.querySelectorAll(".start-button");
   var stopButtons = document.querySelectorAll(".stop-button");
   var resetButtons = document.querySelectorAll(".reset-button");
-  var alarmSounds = document.querySelectorAll("audio");
 
   let currentTab = document.querySelector(".tab-pane.active");
 
@@ -28,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "Alright, let's kick off another productive session!"
   ];
 
-  // Get Users permission on notifications, got to have consent you know...
+  // Get Users permission on notifications
   if (Notification.permission !== "granted") {
     Notification.requestPermission();
   }
@@ -53,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return messageArray[Math.floor(Math.random() * messageArray.length)];
   }
 
-  function TimerSetup(timerDisplayElement, startButton, stopButton, resetButton, alarmSound, initialTime) {
+  function TimerSetup(timerDisplayElement, startButton, stopButton, resetButton, initialTime) {
     var remainingTime = initialTime;
     var timerInterval = null;
 
@@ -74,7 +73,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
           if (remainingTime <= 0) {
             clearInterval(timerInterval);
-            alarmSound.play();
             stopButton.disabled = true;
             startButton.disabled = false;
 
@@ -83,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
               getRandomMessage(pomodoroEndMessages) : getRandomMessage(breakEndMessages);
             sendNotification(notificationTitle, {body: notificationBody, icon: "/static/ico.png"});
 
-            // Enable next timer (fingers crossed this works)
+            // Enable next timer
             var tabs = Array.from(document.querySelectorAll('.tab-pane'));
             var currentTabIndex = tabs.indexOf(currentTab);
             var nextTab = tabs[(currentTabIndex + 1) % tabs.length];
@@ -108,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     resetButton.addEventListener("click", resetTimer);
 
-    resetTimer(); // reset if you feel like going again
+    resetTimer();
   }
 
   function initializeTimers() {
@@ -117,7 +115,6 @@ document.addEventListener("DOMContentLoaded", function () {
       var startButton = startButtons[i];
       var stopButton = stopButtons[i];
       var resetButton = resetButtons[i];
-      var alarmSound = alarmSounds[i];
 
       var initialTime;
       switch (timerDisplayElement.closest(".tab-pane").id) {
@@ -131,23 +128,22 @@ document.addEventListener("DOMContentLoaded", function () {
           initialTime = LONG_BREAK;
           break;
         default:
-          console.error("Unknown timer type"); // This probably never should happen
+          console.error("Unknown timer type");
       }
 
-      initialTime = 2; // FIXME: For testing purposes, once satsified, remove this line
+      initialTime = 2; // FIXME: For testing purposes, once satisfied, remove this line
 
-      TimerSetup(timerDisplayElement, startButton, stopButton, resetButton, alarmSound, initialTime);
+      TimerSetup(timerDisplayElement, startButton, stopButton, resetButton, initialTime);
     }
   }
 
-  // Switch tabs without breaking everything (hopefully)
+  // Switch tabs without breaking everything
   document.querySelectorAll(".nav-link").forEach(function(tabLink) {
     tabLink.addEventListener("click", function(event) {
       currentTab = document.querySelector(tabLink.getAttribute("href"));
     });
   });
 
-  // Let's do it
+  // Initialize timers
   initializeTimers();
-
 });
