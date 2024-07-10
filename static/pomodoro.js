@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
             stopButton.disabled = true;
             startButton.disabled = false;
 
-            var notificationTitle = "All-in-1 Pomodoro-Timers";
+            var notificationTitle = "All-in-1 Productivity";
             var notificationBody = currentTab.id === "pomodoro" ?
               getRandomMessage(pomodoroEndMessages) : getRandomMessage(breakEndMessages);
             sendNotification(notificationTitle, {body: notificationBody, icon: "/static/ico.png"});
@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
           console.error("Unknown timer type");
       }
 
-      initialTime = 2; // FIXME: For testing purposes, once satisfied, remove this line
+      //initialTime = 2; // FIXME: For testing purposes, once satisfied, remove this line
 
       TimerSetup(timerDisplayElement, startButton, stopButton, resetButton, initialTime);
     }
