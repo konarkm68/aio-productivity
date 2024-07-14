@@ -34,7 +34,7 @@ def after_request(response):
     return response
 
 def count_tasks_group_by_status(tasks):
-    tasks_status_count = {
+    '''tasks_status_count = {
         "not started": 0,
         "in progress": 0,
         "pending": 0,
@@ -48,7 +48,8 @@ def count_tasks_group_by_status(tasks):
         elif i["status"] == "pending":
             tasks_status_count["pending"] += 1
         elif i["status"] == "completed":
-            tasks_status_count["completed"] += 1
+            tasks_status_count["completed"] += 1'''
+    tasks_status_count = db.execute("")
     return tasks_status_count
 
 @app.route("/")
