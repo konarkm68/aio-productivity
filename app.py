@@ -136,8 +136,6 @@ def login():
 
         flash("Logged in!")
 
-        print(session["user_id"])
-
         # Redirect user to home page
         return redirect("/")
 
@@ -152,8 +150,6 @@ def logout():
 
     # Forget any user_id
     session.clear()
-
-    flash("Logged out!!")
 
     # Redirect user to login form
     return redirect("/")
