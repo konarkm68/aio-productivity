@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
           console.error("Unknown timer type");
       }
 
-      initialTime = 2; // FIXME: For testing purposes, once satisfied, remove this line
+      //initialTime = 2; // FIXME: For testing purposes, once satisfied, remove this line
 
       TimerSetup(timerDisplayElement, startButton, stopButton, resetButton, initialTime);
     }
