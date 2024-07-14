@@ -153,6 +153,8 @@ def logout():
     # Forget any user_id
     session.clear()
 
+    
+
     # Redirect user to login form
     return redirect("/")
 
@@ -252,7 +254,7 @@ def update_note_route(note_id):
 def profile():
     if ("user_id" not in session.keys()):
         return redirect(url_for("login"))
-    
+
     """Modify User Profile"""
 
     user = db.execute("""
