@@ -33,27 +33,10 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-def count_tasks_group_by_status(tasks):
-    '''tasks_status_count = {
-        "not started": 0,
-        "in progress": 0,
-        "pending": 0,
-        "completed": 0
-    }
-    for i in tasks:
-        if i["status"] == "not started":
-            tasks_status_count["not started"] += 1
-        elif i["status"] == "in progress":
-            tasks_status_count["in progress"] += 1
-        elif i["status"] == "pending":
-            tasks_status_count["pending"] += 1
-        elif i["status"] == "completed":
-            tasks_status_count["completed"] += 1'''
+def count_tasks_group_by_status():
     tasks_status_count_db = db.execute("SELECT status, COUNT(*) FROM tasks WHERE user_id=? GROUP BY status", session.get("user_id"))
 
-    print(tasks_status_count_db)
-
-    
+    tasks_status_count = {counter['status']: counter['COUNT(*)'] for counter in tasks_status_count_db}
 
     return tasks_status_count
 
@@ -72,7 +55,7 @@ def index():
 
     tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?;", session["user_id"])
 
-    return render_template("index.html", user=user, quote=response["quote"], author=response["author"], tasks=tasks, tasks_status_counter=count_tasks_group_by_status(tasks))
+    return render_template("index.html", user=user, quote=response["quote"], author=response["author"], tasks=tasks, tasks_status_counter=count_tasks_group_by_status())
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -168,7 +151,7 @@ def tasks():
 
     tasks = db.execute("SELECT * FROM tasks WHERE user_id = ?", session["user_id"])
 
-    return render_template("tasks.html", tasks=tasks, tasks_status_counter=count_tasks_group_by_status(tasks))
+    return render_template("tasks.html", tasks=tasks, tasks_status_counter=count_tasks_group_by_status())
 
 @app.route('/add_task', methods=['POST'])
 def add_task():
