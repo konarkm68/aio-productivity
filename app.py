@@ -50,6 +50,9 @@ def count_tasks_group_by_status(tasks):
         elif i["status"] == "completed":
             tasks_status_count["completed"] += 1'''
     tasks_status_count = db.execute("SELECT status, COUNT(*) FROM tasks WHERE user_id=? GROUP BY status", session.get("user_id"))[0]
+
+    print(tasks_status_count)
+    
     return tasks_status_count
 
 @app.route("/")
