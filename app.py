@@ -139,6 +139,7 @@ def login():
 
 
 @app.route("/logout")
+@login_required
 def logout():
     """Log user out"""
 
@@ -150,6 +151,7 @@ def logout():
 
 
 @app.route('/tasks', methods=["GET"])
+@login_required
 def tasks():
     if ("user_id" not in session.keys()):
         return redirect(url_for("login"))
@@ -159,9 +161,10 @@ def tasks():
     return render_template("tasks.html", tasks=tasks, tasks_status_counter=count_tasks_group_by_status())
 
 @app.route('/add_task', methods=['POST'])
+@login_required
 def add_task():
     task = request.form.get("task")
-    category = request.form.get("category") or "uncategorized"
+    #category = request.form.get("category") or "uncategorized"
     status = request.form.get("status") or "not started"
 
     db.execute("INSERT INTO tasks (task, status, user_id) VALUES (?, ?, ?)", task, status, session["user_id"])
@@ -169,6 +172,7 @@ def add_task():
     return redirect(url_for('tasks'))
 
 @app.route('/del_task', methods=["POST"])
+@login_required
 def del_task():
     ic(request.form.get("task_id"))
     db.execute("DELETE from tasks WHERE id = ? AND user_id = ?", request.form.get("task_id"), session["user_id"])
@@ -176,6 +180,7 @@ def del_task():
     return redirect(url_for('tasks'))
 
 @app.route('/edit_task/<int:task_id>', methods=['GET'])
+@login_required
 def edit_task_route(task_id):
     task = db.execute("SELECT * FROM tasks WHERE id = ? AND user_id = ?", task_id, session["user_id"])
     if not task:
@@ -183,6 +188,7 @@ def edit_task_route(task_id):
     return render_template("edit_task.html", task=task[0])
 
 @app.route('/update_task/<int:task_id>', methods=['POST'])
+@login_required
 def update_task_route(task_id):
     new_task = request.form.get('task')
     new_status = request.form.get('status')
@@ -191,12 +197,12 @@ def update_task_route(task_id):
     return redirect(url_for('tasks'))
 
 @app.route('/pomodoro')
+@login_required
 def pomodoro():
-    if ("user_id" not in session.keys()):
-        return redirect(url_for("login"))
     return render_template('pomodoro.html')
 
 @app.route('/notes', methods=["GET"])
+@login_required
 def notes():
     if ("user_id" not in session.keys()):
         return redirect(url_for("login"))
@@ -205,6 +211,7 @@ def notes():
 
     return render_template('notes.html', notes=notes)
 @app.route('/add_note', methods=["POST"])
+@login_required
 def add_note():
     note = request.form.get("note")
 
@@ -220,12 +227,14 @@ def add_note():
 
 
 @app.route('/del_note', methods=["POST"])
+@login_required
 def del_note():
     db.execute("DELETE from notes WHERE id = ? AND user_id = ?", request.form.get("note_id"), session["user_id"])
 
     return redirect(url_for('notes'))
 
 @app.route('/edit_note/<int:note_id>', methods=['GET'])
+@login_required
 def edit_note_route(note_id):
     note = db.execute("SELECT * FROM notes WHERE id = ? AND user_id = ?", note_id, session["user_id"])
     if not note:
@@ -233,11 +242,32 @@ def edit_note_route(note_id):
     return render_template("edit_note.html", note=note[0])
 
 @app.route('/update_note/<int:note_id>', methods=['POST'])
+@login_required
 def update_note_route(note_id):
     new_note = request.form.get('note')
     db.execute("UPDATE notes SET note = ? WHERE id = ? AND user_id = ?", new_note, note_id, session["user_id"])
     flash("Note updated successfully!")
     return redirect(url_for('notes'))
+
+
+@app.route('/del_user', methods=["POST"])
+@login_required
+def del_user():
+    if request.method == "POST":
+        user_id = db.execute("""
+SELECT id FROM users
+WHERE id=?
+;""", session.get("user_id"))[0]["id"]
+
+        session.clear()
+
+        db.execute(f"""
+DELETE FROM users
+WHERE id={user_id}
+;""")
+
+    return redirect("/")
+
 
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
