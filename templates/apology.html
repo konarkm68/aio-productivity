@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+  Oopsie Daisies! We Goofed Up ({{ error_code }})
+{% endblock %}
+
+{% block main %}
+  <div class="error-container">
+    <div class="error-message-wrapper">
+      <h2 class="error-message">We're terribly sorry!</h2>
+      <br>
+      <p class="error-details">
+        {% if err_code == 404 %}
+          The page you requested was not found.
+        {% elif err_code == 500 %}
+          An unexpected error occurred on our server.
+        {% else %}
+          Something went wrong (Error Code: {{ err_code }}).
+        {% endif %}
+        <br>
+        <br>
+        {{ bottom }}
+      </p>
+      <div class="error-actions">
+        <a href="/" class="btn btn-primary">Take me back home.</a>
+        {% if prev_url != "/" %}
+          <a href="{{ prev_url }}" class="btn btn-secondary">Go back to previous page.</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

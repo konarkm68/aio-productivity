@@ -33,6 +33,11 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+
+@app.errorhandler(404)
+def not_found(error):
+    return apology("The page could not be found. Did you perhaps mistype the URL?", 404)
+
 def count_tasks_group_by_status():
     tasks_status_count_db = db.execute("SELECT status, COUNT(*) FROM tasks WHERE user_id=? GROUP BY status", session.get("user_id"))
 
@@ -71,10 +76,10 @@ def register():
             or not request.form.get("password")
             or not request.form.get("confirmation")
         ):
-            return apology("must provide username and password", 400)
+            return apology("Please provide your username and password and confirmation password and try again.", 403)
 
         if password != confirmation:
-            return apology("passwords must match", 400)
+            return apology("Oops! The passwords you entered are different. Please double-check and re-type your password.", 403)
         rows = db.execute("SELECT * FROM users WHERE username = ?", username)
         if not rows:
             hashed_password = generate_password_hash(
@@ -87,7 +92,7 @@ def register():
             )
             return render_template("register.html", error="Registration Successful!")
         else:
-            return apology("username already taken", 400)
+            return apology("Whoops! It looks like someone else has already claimed that username. Try picking a unique one.", 400)
 
     return render_template("register.html")
 
@@ -103,11 +108,11 @@ def login():
     if request.method == "POST":
         # Ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username", 403)
+            return apology("Invalid credentials. Please provide your username and try again.", 403)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 403)
+            return apology("Invalid credentials. Please provide your password and try again.", 403)
 
         # Query database for username
         rows = db.execute(
@@ -118,7 +123,7 @@ def login():
         if len(rows) != 1 or not check_password_hash(
             rows[0]["hash"], request.form.get("password")
         ):
-            return apology("invalid username and/or password", 403)
+            return apology("Invalid credentials. Please check your username and password and try again.", 403)
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
@@ -174,7 +179,7 @@ def del_task():
 def edit_task_route(task_id):
     task = db.execute("SELECT * FROM tasks WHERE id = ? AND user_id = ?", task_id, session["user_id"])
     if not task:
-        return apology("Task not found", 404)
+        return apology("The task you're trying to access might have been deleted or moved. Please try searching for it again.", 404)
     return render_template("edit_task.html", task=task[0])
 
 @app.route('/update_task/<int:task_id>', methods=['POST'])
@@ -224,7 +229,7 @@ def del_note():
 def edit_note_route(note_id):
     note = db.execute("SELECT * FROM notes WHERE id = ? AND user_id = ?", note_id, session["user_id"])
     if not note:
-        return apology("Note not found", 404)
+        return apology("Uh oh! Seems like the note you requested isn't available anymore.", 404)
     return render_template("edit_note.html", note=note[0])
 
 @app.route('/update_note/<int:note_id>', methods=['POST'])
@@ -260,17 +265,17 @@ WHERE id=?
 
         # Ensure password was submitted
         if not old_pass or not new_pass or not confirmation:
-            return apology("must provide old password and/or new password / confirm new password", 403)
+            return apology("Current Password: Please enter your current password for verification.\nNew Password: Choose a strong password for your account.\nConfirm New Password: Re-enter your new password to ensure it's correct.", 403)
 
         # Ensure old password is correct
         if not check_password_hash(user["hash"], old_pass):
-            return apology("invalid old password", 403)
+            return apology("The current password you entered is incorrect. Please try again.", 400, request.referrer)
 
         if old_pass == new_pass:
-            return apology("old password and new password should not match", 400)
+            return apology("To enhance your account security, choose a new password that's different from your current password.", 400, request.referrer)
 
         if new_pass != confirmation:
-            return apology("new password and confirm new password should match", 400)
+            return apology("Your passwords don't match. Please ensure your 'Confirm New Password' field matches your 'New Password'.", 400, request.referrer)
 
         # Query to insert user
         db.execute("""
