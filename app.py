@@ -218,10 +218,10 @@ def add_note():
     if not note:
         note = "empty"
 
-    category = request.form.get("category") or "uncategorized"
+    #category = request.form.get("category") or "uncategorized"
 
-    db.execute("INSERT INTO notes (note, category, user_id) VALUES (?, ?, ?)",
-                note, category, session["user_id"])
+    db.execute("INSERT INTO notes (note, user_id) VALUES (?, ?)",
+                note, session["user_id"])
 
     return redirect(url_for('notes'))
 
@@ -262,9 +262,18 @@ WHERE id=?
         session.clear()
 
         db.execute(f"""
+DELETE FROM tasks
+WHERE user_id={user_id}
+;""")
+        db.execute(f"""
+DELETE FROM notes
+WHERE user_id={user_id}
+;""")
+        db.execute(f"""
 DELETE FROM users
 WHERE id={user_id}
 ;""")
+
 
     return redirect("/")
 
